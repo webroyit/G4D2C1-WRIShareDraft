@@ -30,10 +30,11 @@ function TextEditor() {
         }
     }, [])
 
+    //  Track the changes on text editor
     useEffect(() => {
         // quill and socket are undefined at the start
         if (socket == null || quill == null) return;
-        
+
         const handler = (delta, oldDelta, source) => {
             // Prevent tracking of changes from the server
             if (source !== 'user') return;
@@ -43,11 +44,28 @@ function TextEditor() {
             socket.emit("send-changes", delta);
         }
         
-        quill.on("text-change", handler)
+        quill.on("text-change", handler);
 
         // Remove the event listeners when it is not being used
         return () => {
             quill.off("text-change", handler);
+        }
+    }, [socket, quill])
+
+    //  Get the changes on text editor
+    useEffect(() => {
+        // quill and socket are undefined at the start
+        if (socket == null || quill == null) return;
+        
+        const handler = (delta) => {
+            quill.updateContents(delta);
+        }
+        
+        socket.on("receive-changes", handler);
+
+        // Remove the event listeners when it is not being used
+        return () => {
+            quill.off("receive-changes", handler);
         }
     }, [socket, quill])
 

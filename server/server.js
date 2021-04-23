@@ -11,6 +11,7 @@ const io = require('socket.io')(3001, {
 // Communication for the client
 io.on('connection', socket => {
     socket.on('send-changes', delta => {
-        console.log(delta);
+        // Send changes to everyone else expect itself
+        socket.broadcast.emit("receive-changes", delta);
     })
 })
