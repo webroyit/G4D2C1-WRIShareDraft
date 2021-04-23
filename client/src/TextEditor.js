@@ -30,6 +30,27 @@ function TextEditor() {
         }
     }, [])
 
+    useEffect(() => {
+        // quill and socket are undefined at the start
+        if (socket == null || quill == null) return;
+        
+        const handler = (delta, oldDelta, source) => {
+            // Prevent tracking of changes from the server
+            if (source !== 'user') return;
+
+            // Send the changes to the server
+            // delta is the changes made in the document
+            socket.emit("send-changes", delta);
+        }
+        
+        quill.on("text-change", handler)
+
+        // Remove the event listeners when it is not being used
+        return () => {
+            quill.off("text-change", handler);
+        }
+    }, [socket, quill])
+
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) return;
 
