@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
+const SAVE_INTERVAL_MS = 3000;
 const TOOLBAR_OPTIONS = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
     [{ font: [] }],
@@ -83,11 +84,21 @@ function TextEditor() {
             quill.enable();
         })
 
-        socket.emit("get-document", documentId)
-        return () => {
-            
-        }
+        socket.emit("get-document", documentId);
     }, [socket, quill, documentId])
+
+    useEffect(() => {
+        if(socket == null || quill == null) return;
+
+        const interval = setInterval(() => {
+            socket.emit('save-document', quill.getContents());
+        }, SAVE_INTERVAL_MS);
+
+        // Clear the interval
+        return () => {
+            clearInterval(interval);
+        }
+    }, [socket, quill])
 
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) return;
