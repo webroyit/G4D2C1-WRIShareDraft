@@ -1,3 +1,15 @@
+const mongoose = require("mongoose");
+const Document = require('./Document');
+
+// Connect to MongoDB
+mongoose.connect("mongodb+srv://<username>:<password>@cluster0.oy8wd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+    // For backwards compatibility
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+})
+
 // This is a function
 // Need to fix CORS because client and server port are different
 const io = require('socket.io')(3001, {
