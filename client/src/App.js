@@ -1,11 +1,24 @@
 import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom';
+
 import TextEditor from './TextEditor';
 
 function App() {
   return (
-    <div className="App">
-      <TextEditor />
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <TextEditor />
+        </Route>
+        <Route path="/documents/:id">
+          <TextEditor />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
