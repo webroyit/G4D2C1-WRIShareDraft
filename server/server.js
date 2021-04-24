@@ -10,8 +10,15 @@ const io = require('socket.io')(3001, {
 
 // Communication for the client
 io.on('connection', socket => {
-    socket.on('send-changes', delta => {
-        // Send changes to everyone else expect itself
-        socket.broadcast.emit("receive-changes", delta);
+    // Put the socket into its own room
+    socket.on("get-document", documentId => {
+        const data = "";
+        socket.join(documentId);
+        socket.emit("load-document", data)
+
+        socket.on('send-changes', delta => {
+            // Send changes to everyone else expect itself
+            socket.broadcast.to(documentId).emit("receive-changes", delta);
+        })
     })
 })
